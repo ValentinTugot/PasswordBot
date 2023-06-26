@@ -1,19 +1,40 @@
 package me.juval.password;
 
-// Press Shift twice to open the Search Everywhere dialog and type `show whitespaces`,
-// then press Enter. You can now see whitespace characters in your code.
+import io.github.cdimascio.dotenv.Dotenv;
+import javax.security.auth.login.LoginException;
+import me.juval.password.commands.CommandManager;
+import net.dv8tion.jda.api.OnlineStatus;
+import net.dv8tion.jda.api.requests.GatewayIntent;
+import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.api.sharding.ShardManager;
+
 public class Main {
+    public final Dotenv config = Dotenv.configure().load();
+
+    private final ShardManager shardManager;
+
+    public Main() throws LoginException {
+        String token = this.config.get("TOKEN");
+        DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
+        builder.setStatus(OnlineStatus.ONLINE);
+        builder.enableIntents(GatewayIntent.GUILD_MESSAGES, new GatewayIntent[] { GatewayIntent.GUILD_MEMBERS });
+        this.shardManager = builder.build();
+        this.shardManager.addEventListener(new Object[] { new CommandManager() });
+    }
+
+    public Dotenv getConfig() {
+        return this.config;
+    }
+
+    public ShardManager getShardManager() {
+        return this.shardManager;
+    }
+
     public static void main(String[] args) {
-        // Press Alt+Entrée with your caret at the highlighted text to see how
-        // IntelliJ IDEA suggests fixing it.
-        System.out.printf("Hello and welcome!");
-
-        // Press Maj+F10 or click the green arrow button in the gutter to run the code.
-        for (int i = 1; i <= 5; i++) {
-
-            // Press Maj+F9 to start debugging your code. We have set one breakpoint
-            // for you, but you can always add more by pressing Ctrl+F8.
-            System.out.println("i = " + i);
+        try {
+            Main main = new Main();
+        } catch (LoginException e) {
+            System.out.println("Erreur de connexion");
         }
     }
 }
