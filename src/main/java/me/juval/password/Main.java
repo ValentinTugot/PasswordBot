@@ -1,7 +1,8 @@
 package me.juval.password;
 
-import io.github.cdimascio.dotenv.Dotenv;
 import javax.security.auth.login.LoginException;
+
+import io.github.cdimascio.dotenv.Dotenv;
 import me.juval.password.commands.CommandManager;
 import net.dv8tion.jda.api.OnlineStatus;
 import net.dv8tion.jda.api.requests.GatewayIntent;
@@ -9,12 +10,12 @@ import net.dv8tion.jda.api.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.api.sharding.ShardManager;
 
 public class Main {
-    public final Dotenv config = Dotenv.configure().load();
+    public final Dotenv config = Dotenv.load();
 
     private final ShardManager shardManager;
 
     public Main() throws LoginException {
-        String token = this.config.get("TOKEN");
+        String token = config.get("TOKEN");
         DefaultShardManagerBuilder builder = DefaultShardManagerBuilder.createDefault(token);
         builder.setStatus(OnlineStatus.ONLINE);
         builder.enableIntents(GatewayIntent.GUILD_MESSAGES, new GatewayIntent[] { GatewayIntent.GUILD_MEMBERS });
